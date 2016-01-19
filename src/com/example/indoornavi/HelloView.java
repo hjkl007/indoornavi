@@ -9,9 +9,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.example.indoornavi.view.DrawerView;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 public class HelloView extends Activity {
 	
 	Button bt1;
+	protected SlidingMenu side_drawer;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,6 +30,12 @@ public class HelloView extends Activity {
 		        startActivity(intent);
 		      }
 		    });
+		
+		initSlidingMenu();
+	}
+	
+	protected void initSlidingMenu() {
+		side_drawer = new DrawerView(this).initSlidingMenu();
 	}
 
 	@Override

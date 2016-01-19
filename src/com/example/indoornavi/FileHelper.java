@@ -33,7 +33,7 @@ public class FileHelper {
 			while ((line = bufReader.readLine()) != null)
 				Result += line;
 
-			System.out.print(Result);
+			//System.out.print(Result);
 			return Result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -54,7 +54,7 @@ public class FileHelper {
 
 			int code = uc.getResponseCode();
 			String response = uc.getResponseMessage();
-			System.out.println("HTTP/1.x " + code + " " + response);
+			//System.out.println("HTTP/1.x " + code + " " + response);
 			for (int j = 1;; j++) {
 				String key = uc.getHeaderFieldKey(j);
 				String header = uc.getHeaderField(j);
@@ -64,10 +64,10 @@ public class FileHelper {
 				}
 				if (header == null || key == null)
 					break;
-				System.out.println(uc.getHeaderFieldKey(j) + ": " + header);
+				//System.out.println(uc.getHeaderFieldKey(j) + ": " + header);
 			}
 			Log.i("zhr", fileName);
-			System.out.println();
+			//System.out.println();
 
 			try (InputStream in = new BufferedInputStream(uc.getInputStream())) {
 
@@ -78,7 +78,7 @@ public class FileHelper {
 				mapFile.createNewFile();
 				FileOutputStream filecon = new FileOutputStream(mapFile);
 				while ((c = r.read()) != -1) {
-					System.out.print((char) c);
+					//System.out.print((char) c);
 					filecon.write(c);
 					filecon.flush();
 

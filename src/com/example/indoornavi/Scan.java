@@ -55,8 +55,7 @@ public class Scan extends Activity {
 				SVGMapLocationOverlay locationOverlay = new SVGMapLocationOverlay(
 						mapView);
 				locationOverlay.setIndicatorArrowBitmap(BitmapFactory
-						.decodeResource(getResources(),
-								R.drawable.indicator_arrow));
+						.decodeResource(getResources(), R.drawable.indicator_arrow));
 				locationOverlay.setPosition(new PointF(400, 500));
 				locationOverlay.setIndicatorCircleRotateDegree(90);
 				locationOverlay.setMode(SVGMapLocationOverlay.MODE_COMPASS);
@@ -74,12 +73,12 @@ public class Scan extends Activity {
 			}
 		});
 
-		new AlertDialog.Builder(this).setTitle("«Î ‰»Î")
+		new AlertDialog.Builder(this).setTitle("ËØ∑ËæìÂÖ•Ôºö")
 				.setIcon(android.R.drawable.ic_dialog_info).setView(et)
-				.setPositiveButton("»∑∂®", new DialogInterface.OnClickListener() {// ÃÌº”»∑∂®∞¥≈•
+				.setPositiveButton("Á°ÆÂÆö", new DialogInterface.OnClickListener() {// ÔøΩÔøΩÔøΩ»∑ÔøΩÔøΩÔøΩÔøΩ≈•
 							@Override
 							public void onClick(DialogInterface dialog,
-									int which) {// »∑∂®∞¥≈•µƒœÏ”¶ ¬º˛
+									int which) {// »∑ÔøΩÔøΩÔøΩÔøΩ≈•ÔøΩÔøΩÔøΩÔøΩ”¶ÔøΩ¬ºÔøΩ
 								// TODO Auto-generated method stub
 								filename = et.getText().toString() + ".svg";
 								Log.i("zhr", "locate = " + filename);
@@ -90,7 +89,6 @@ public class Scan extends Activity {
 
 								if (mkDir.listFiles().length > 0) {
 									for (File file : mkDir.listFiles()) {
-										String ff = file.getName();
 										if (filename.equals(file.getName())) {
 											isExist = true;
 											break;
@@ -106,7 +104,7 @@ public class Scan extends Activity {
 
 							}
 
-						}).setNegativeButton("»°œ˚", null).show();
+						}).setNegativeButton("ÂèñÊ∂à", null).show();
 
 	}
 
@@ -134,7 +132,5 @@ public class Scan extends Activity {
 			super.handleMessage(msg);
 		}
 	};
-
-	
 
 }

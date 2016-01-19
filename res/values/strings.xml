@@ -4,5 +4,17 @@
     <string name="app_name">IndoorNavi</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="left_drawer_no_login_tip">登录后，将推荐给你更多感兴趣的文章</string>
+    <string name="left_drawer_item_search">搜索</string>
+    <string name="left_drawer_item_favorite">收藏</string>
+    <string name="left_drawer_item_message">消息</string>
+    <string name="left_drawer_item_offline">离线</string>
+    <string name="left_drawer_item_offline_cancel">取消离线</string>
+    <string name="left_drawer_item_activity">活动</string>
+    <string name="left_drawer_item_setting">设置</string>
+    <string name="left_drawer_item_feedback">反馈</string>
+    <string name="left_drawer_item_appstore">精彩应用</string>
+    <string name="drawer_right_logout_hint_text">"登录后 可关注好友评论和收藏"</string>
+    <string name="drawer_right_tip_no_login">未登录</string>
 
 </resources>
