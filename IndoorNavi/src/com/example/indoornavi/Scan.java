@@ -122,7 +122,7 @@ public class Scan extends Activity {
 			case file_exist:
 				String f = sdRoot.getPath() + dir + filename;
 				Log.i("zhr", f);
-				mapView.loadMap(FileHelper.getContent(f));
+				mapView.loadMap(FileHelper.getContent(f), Scan.this);
 				break;
 
 			case file_no_exist:
@@ -131,7 +131,7 @@ public class Scan extends Activity {
 				Log.i("zhr", url_api);
 				FileHelper.getURL(url_api);
 				String f2 = sdRoot.getPath() + dir + filename;
-				mapView.loadMap(FileHelper.getContent(f2));
+				mapView.loadMap(FileHelper.getContent(f2), Scan.this);
 
 				break;
 			default:

@@ -1,5 +1,6 @@
 package com.example.indoornavi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Application;
@@ -7,13 +8,13 @@ import android.content.Intent;
 
 public class MyApplication extends Application {
 
-	public List<Element> elements;
+	public List<Element> elements = new ArrayList<Element>();
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
 		
-		sendBroadcast(new Intent());
+
 	}
 	
 	public static class Element{
