@@ -1,8 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
+    <include layout="@layout/main_head" />
+    
     <com.jiahuan.svgmapview.SVGMapView
         android:id="@+id/location_mapview"
         android:layout_width="match_parent"
@@ -11,4 +14,4 @@
     </com.jiahuan.svgmapview.SVGMapView>
     
 
-</RelativeLayout>
+</LinearLayout>

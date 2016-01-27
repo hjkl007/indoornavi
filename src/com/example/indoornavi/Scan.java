@@ -1,25 +1,11 @@
 package com.example.indoornavi;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import com.example.indoornavi.FileHelper;
-import com.jiahuan.svgmapview.SVGMapView;
-import com.jiahuan.svgmapview.SVGMapViewListener;
-import com.jiahuan.svgmapview.overlay.SVGMapLocationOverlay;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
@@ -28,11 +14,21 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
+
+import com.example.indoornavi.helper.FileHelper;
+import com.jiahuan.svgmapview.SVGMapView;
+import com.jiahuan.svgmapview.SVGMapViewListener;
+import com.jiahuan.svgmapview.overlay.SVGMapLocationOverlay;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 
 public class Scan extends Activity {
 
-	String url = "http://192.168.1.106/api/";
+	String url = "http://192.168.1.107/api/";
 	EditText et;
 	String filename = "";
 	String dir = "/IndoorNavi/";
@@ -41,14 +37,14 @@ public class Scan extends Activity {
 	final int file_exist = 1;
 	final int file_no_exist = 2;
 	private SVGMapView mapView;
-
+	private ImageView search;
+	public final static int SEARCHRESULTCODE = 10;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.scan_view);
-		et = new EditText(this);
+		et = new EditText(this);		
 		mapView = (SVGMapView) findViewById(R.id.location_mapview);
-
 		mapView.registerMapViewListener(new SVGMapViewListener() {
 			@Override
 			public void onMapLoadComplete() {
@@ -72,13 +68,25 @@ public class Scan extends Activity {
 			public void onGetCurrentMap(Bitmap bitmap) {
 			}
 		});
+		
+		search = (ImageView) findViewById(R.id.top_more);
+		search.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent_search = new  Intent(getApplicationContext(), SearchActivity.class);
+				startActivityForResult(intent_search, SEARCHRESULTCODE);
+				overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+			}
+		});
 
 		new AlertDialog.Builder(this).setTitle("请输入：")
 				.setIcon(android.R.drawable.ic_dialog_info).setView(et)
-				.setPositiveButton("确定", new DialogInterface.OnClickListener() {// ���ȷ����ť
+				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
-									int which) {// ȷ����ť����Ӧ�¼�
+									int which) {
 								// TODO Auto-generated method stub
 								filename = et.getText().toString() + ".svg";
 								Log.i("zhr", "locate = " + filename);
@@ -132,5 +140,21 @@ public class Scan extends Activity {
 			super.handleMessage(msg);
 		}
 	};
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		switch (requestCode) {
+		case SEARCHRESULTCODE:
+			if(resultCode == SEARCHRESULTCODE){
+				
+			}
+			break;
+
+		default:
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 
 }

@@ -1,4 +1,4 @@
-package com.example.indoornavi;
+package com.example.indoornavi.helper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

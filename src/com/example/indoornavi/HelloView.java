@@ -3,9 +3,12 @@ package com.example.indoornavi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
@@ -13,27 +16,35 @@ import com.example.indoornavi.view.DrawerView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class HelloView extends Activity {
-	
+
 	Button bt1;
 	protected SlidingMenu side_drawer;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_hello_view);
-		
-		bt1 = (Button)findViewById(R.id.button1);
-		bt1.setOnClickListener(new OnClickListener() {		 
-		      @Override
-		      public void onClick(View v) {
-		        // TODO Auto-generated method stub
-		        Intent intent = new Intent(HelloView.this, Scan.class);
-		        startActivity(intent);
-		      }
-		    });
-		
+
+		if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+			getWindow().addFlags(
+					WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			getWindow().addFlags(
+					WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+		}
+
+		bt1 = (Button) findViewById(R.id.button1);
+		bt1.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(HelloView.this, Scan.class);
+				startActivity(intent);
+			}
+		});
+
 		initSlidingMenu();
 	}
-	
+
 	protected void initSlidingMenu() {
 		side_drawer = new DrawerView(this).initSlidingMenu();
 	}

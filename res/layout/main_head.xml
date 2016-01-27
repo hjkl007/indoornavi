@@ -42,16 +42,6 @@
         android:background="@drawable/badge_titlebar"
         android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/top_more"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:scaleType="centerInside"
-        android:src="@drawable/right_drawer" />
-
     <TextView
         android:id="@+id/top_right_count"
         style="@style/top_update_count"
@@ -64,7 +54,7 @@
         android:background="@drawable/badge_titlebar"
         android:visibility="gone" />
 
-    <RelativeLayout
+   <RelativeLayout
         android:id="@+id/title_click_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -96,16 +86,18 @@
                 android:visibility="gone" />
         </FrameLayout>
 
-        <ImageView
-            android:id="@+id/top_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/title_parent"
-            android:padding="3.0dip"
-            android:src="@drawable/refreshicon_titlebar" />
-
         
     </RelativeLayout>
+
+   <ImageView
+       android:id="@+id/top_more"
+       android:layout_width="wrap_content"
+       android:layout_height="fill_parent"
+       android:layout_alignParentRight="true"
+       android:layout_alignParentTop="true"
+       android:layout_marginRight="10dp"
+       android:gravity="center"
+       android:scaleType="centerInside"
+       android:src="@drawable/right_drawer" />
 
 </RelativeLayout>

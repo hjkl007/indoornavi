@@ -16,5 +16,6 @@
     <string name="left_drawer_item_appstore">精彩应用</string>
     <string name="drawer_right_logout_hint_text">"登录后 可关注好友评论和收藏"</string>
     <string name="drawer_right_tip_no_login">未登录</string>
+    <string name="search_hint">请输入店铺名</string>
 
 </resources>
