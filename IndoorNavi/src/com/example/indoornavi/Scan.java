@@ -4,8 +4,11 @@ import java.io.File;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
@@ -14,17 +17,18 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.example.indoornavi.MyApplication.Element;
 import com.example.indoornavi.helper.FileHelper;
 import com.jiahuan.svgmapview.SVGMapView;
 import com.jiahuan.svgmapview.SVGMapViewListener;
 import com.jiahuan.svgmapview.overlay.SVGMapLocationOverlay;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-
+import com.jiahuan.svgmapview.overlay.SVGMapTargetOverlay;
 
 public class Scan extends Activity {
 
@@ -39,11 +43,15 @@ public class Scan extends Activity {
 	private SVGMapView mapView;
 	private ImageView search;
 	public final static int SEARCHRESULTCODE = 10;
+	MyApplication application;
+	public final String CLICK_ACTION = "android.intent.action.click";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.scan_view);
-		et = new EditText(this);		
+		application = (MyApplication) this.getApplicationContext();
+		et = new EditText(this);
 		mapView = (SVGMapView) findViewById(R.id.location_mapview);
 		mapView.registerMapViewListener(new SVGMapViewListener() {
 			@Override
@@ -51,7 +59,8 @@ public class Scan extends Activity {
 				SVGMapLocationOverlay locationOverlay = new SVGMapLocationOverlay(
 						mapView);
 				locationOverlay.setIndicatorArrowBitmap(BitmapFactory
-						.decodeResource(getResources(), R.drawable.indicator_arrow));
+						.decodeResource(getResources(),
+								R.drawable.indicator_arrow));
 				locationOverlay.setPosition(new PointF(400, 500));
 				locationOverlay.setIndicatorCircleRotateDegree(90);
 				locationOverlay.setMode(SVGMapLocationOverlay.MODE_COMPASS);
@@ -68,53 +77,98 @@ public class Scan extends Activity {
 			public void onGetCurrentMap(Bitmap bitmap) {
 			}
 		});
-		
+
 		search = (ImageView) findViewById(R.id.top_more);
 		search.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent_search = new  Intent(getApplicationContext(), SearchActivity.class);
+				Intent intent_search = new Intent(getApplicationContext(),
+						SearchActivity.class);
 				startActivityForResult(intent_search, SEARCHRESULTCODE);
-				overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+				overridePendingTransition(R.anim.slide_in_right,
+						R.anim.slide_out_left);
 			}
 		});
 
 		new AlertDialog.Builder(this).setTitle("请输入：")
 				.setIcon(android.R.drawable.ic_dialog_info).setView(et)
 				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								// TODO Auto-generated method stub
-								filename = et.getText().toString() + ".svg";
-								Log.i("zhr", "locate = " + filename);
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						filename = et.getText().toString() + ".svg";
+						Log.i("zhr", "locate = " + filename);
 
-								File mkDir = new File(sdRoot, dir);
-								if (!mkDir.exists())
-									mkDir.mkdirs();
+						File mkDir = new File(sdRoot, dir);
+						if (!mkDir.exists())
+							mkDir.mkdirs();
 
-								if (mkDir.listFiles().length > 0) {
-									for (File file : mkDir.listFiles()) {
-										if (filename.equals(file.getName())) {
-											isExist = true;
-											break;
-										}
-									}
-									Message message = new Message();
-									if (isExist)
-										message.what = file_exist;
-									else
-										message.what = file_no_exist;
-									mHandler.sendMessage(message);
+						if (mkDir.listFiles().length > 0) {
+							for (File file : mkDir.listFiles()) {
+								if (filename.equals(file.getName())) {
+									isExist = true;
+									break;
 								}
-
 							}
+							Message message = new Message();
+							if (isExist)
+								message.what = file_exist;
+							else
+								message.what = file_no_exist;
+							mHandler.sendMessage(message);
+						}
 
-						}).setNegativeButton("取消", null).show();
+					}
+
+				}).setNegativeButton("取消", null).show();
+
+		IntentFilter intentFilter = new IntentFilter(CLICK_ACTION);
+		registerReceiver(new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// TODO Auto-generated method stub
+				Element elementChosen = application.getSearchElement();
+				
+				showAlterBuilder(Scan.this);
+			}
+		}, intentFilter);
 
 	}
+
+	public void showAlterBuilder(Context context) {
+		AlertDialog.Builder targetBuilder = new AlertDialog.Builder(context);
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View target_builder = inflater.inflate(R.layout.target_builder_view,
+				null);
+		ImageView imageView = (ImageView) target_builder
+				.findViewById(R.id.detail);
+		imageView.setImageResource(R.drawable.target_detial);
+		targetBuilder.setView(target_builder);
+		targetBuilder.setCancelable(false);
+		targetBuilder.setPositiveButton("到这里",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						
+					}
+				});
+		targetBuilder.setNeutralButton("详情",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						
+					}
+				});
+		targetBuilder.setNegativeButton("取消",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						
+					}
+				});
+		targetBuilder.show();
+		
+	}
+	
 
 	public Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -140,14 +194,22 @@ public class Scan extends Activity {
 			super.handleMessage(msg);
 		}
 	};
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		switch (requestCode) {
 		case SEARCHRESULTCODE:
-			if(resultCode == SEARCHRESULTCODE){
-				
+			if (resultCode == SEARCHRESULTCODE) {
+				Element elementChosen = application.getSearchElement();
+
+				SVGMapTargetOverlay targetOverlay = new SVGMapTargetOverlay(
+						mapView, Scan.this);
+				targetOverlay.setIndicatorBitmap(BitmapFactory.decodeResource(
+						getResources(), R.drawable.target));
+				targetOverlay.setPosition(elementChosen.getCenterPoint());
+				mapView.getOverLays().add(targetOverlay);
+				mapView.refresh();
 			}
 			break;
 

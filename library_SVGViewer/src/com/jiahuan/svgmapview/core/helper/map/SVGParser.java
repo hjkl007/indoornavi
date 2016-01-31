@@ -889,7 +889,8 @@ public class SVGParser {
 		Float textSize = null;
 		String rectID = "";
 		Context context;
-		Application application;  
+		Float RectCenterX;
+		Float RectCenterY;
 		public static final String BROADCAST_ACTION = "android.intent.action.element.data";
 
 		public SVGHandler(Context context) {
@@ -1388,6 +1389,8 @@ public class SVGParser {
 				pushTransform(atts);
 				Properties props = new Properties(atts);
 				rect.set(x, y, x + width, y + height);
+				RectCenterX = rect.centerX();
+				RectCenterY = rect.centerY();
 				if (doFill(props, rect)) {
 					rect.set(x, y, x + width, y + height);
 					if (rx <= 0f && ry <= 0f) {
@@ -1549,9 +1552,10 @@ public class SVGParser {
 					intent.setAction(BROADCAST_ACTION);
 					intent.putExtra("id", rectID);
 					intent.putExtra("nextPoint", new String(ch, start, length));
+					intent.putExtra("center", new float[]{RectCenterX, RectCenterY});
 					context.sendBroadcast(intent);
 					rectID = "";
-					
+					Log.i(TAG, "center = ("+RectCenterX+", "+ RectCenterY+")");
 					//LocalBroadcastManager.getInstance(getInstance()).sendBroadcast(intent);
 				}
 			}

@@ -1,16 +1,20 @@
 package com.example.indoornavi;
 
-import java.util.ArrayList;  
+import java.util.ArrayList;
 
-import android.app.Activity;  
-import android.os.Bundle;  
-import android.text.TextUtils;  
-import android.widget.ArrayAdapter;  
-import android.widget.ListView;  
-import android.widget.SearchView;  
+import android.app.Activity;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SearchView;
   
 public class SearchActivity extends Activity implements  
         SearchView.OnQueryTextListener {  
+	public final static int SEARCHRESULTCODE = 10;
     ListView listView;  
     SearchView searchView;  
     Object[] names;  
@@ -29,6 +33,15 @@ public class SearchActivity extends Activity implements
                 android.R.layout.simple_expandable_list_item_1, names));  
   
         listView.setTextFilterEnabled(true);  
+        listView.setOnItemClickListener(new OnItemClickListener(){
+        	@Override
+            public void onItemClick(AdapterView<?> parent, View ivew, int position,
+                    long id) {
+        		application.setSearchElement(application.elements.get(position));
+        		SearchActivity.this.setResult(SEARCHRESULTCODE);
+        		finish();
+        	}
+        });
         searchView = (SearchView) findViewById(R.id.search_view); 
         searchView.setOnQueryTextListener(this);  
         searchView.setSubmitButtonEnabled(false);  

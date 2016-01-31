@@ -30,7 +30,7 @@ public class RectHelper
 	}
 
 	public static boolean withRect(MotionEvent event, float x, float y, int dis)
-	{
+	{	//触摸点的偏移在dis个像素以内
 		if (event.getX() >= x - dis && event.getX() <= x + dis && event.getY() >= y - dis && event.getY() <= y + dis)
 		{
 			return true;

@@ -222,6 +222,22 @@ public class MapMainView extends SurfaceView implements Callback
                 }
                 break;
             case MotionEvent.ACTION_UP:
+            	if (RectHelper.withRect(event, start.x, start.y, 6) ){
+            		try
+                    {
+                        for (int i = 0; i < layers.size(); i++)
+                        {
+                            layers.get(i).onTap(event);
+                            //Log.i(TAG, "action of tap!!!");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+            		Log.i(TAG, "action of up!!!");
+            	}
+            	
             case MotionEvent.ACTION_POINTER_UP:
                 isFirstPointedMove = true;
                 this.refresh();
@@ -232,20 +248,10 @@ public class MapMainView extends SurfaceView implements Callback
                 else if (this.mTouchState == TOUCH_STATE_ROTATE)
                 {
                     this.rotateDegrees = this.currentRotateDegrees;
-                }
-                else if (RectHelper.withRect(event, start.x, start.y, 6) && event.getAction() == MotionEvent.ACTION_UP)
+                }	//&& event.getAction() == MotionEvent.ACTION_UP
+                else if (RectHelper.withRect(event, start.x, start.y, 6) )
                 {
-                    try
-                    {
-                        for (int i = 0; i < layers.size(); i++)
-                        {
-                            layers.get(i).onTap(event);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
+
                 }
 
                 if (!isRotationGestureEnabled)

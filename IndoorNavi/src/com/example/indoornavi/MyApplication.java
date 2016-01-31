@@ -5,10 +5,13 @@ import java.util.List;
 
 import android.app.Application;
 import android.content.Intent;
+import android.graphics.PointF;
 
 public class MyApplication extends Application {
 
-	public List<Element> elements = new ArrayList<Element>();
+	public ArrayList<Element> elements = new ArrayList<Element>();
+	private Element searchElement = null;
+	//public PointF point;
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
@@ -17,46 +20,38 @@ public class MyApplication extends Application {
 
 	}
 	
+	public void setSearchElement(Element search){
+		this.searchElement = search;
+	}
+	public Element getSearchElement(){
+		return this.searchElement;
+	}
+	
 	public static class Element{
 		String id;
 		String elementName;
-		Point p;	
+		PointF nextPoint;
+		PointF centerPoint;
 
-		public Element(String mid, String melementName, Point mp){
+		public Element(String mid, String melementName, PointF mp, PointF cen){
 			this.id = mid;
 			this.elementName = melementName;
-			this.p = mp;
+			this.nextPoint = mp;
+			this.centerPoint = cen;
+		}
+		
+		public void setNextPoint(PointF point){
+			this.nextPoint = point;
+		}
+		public PointF getNextPoint(){
+			return this.nextPoint;
+		}
+		public void setCenterPoint(PointF point){
+			this.centerPoint = point;
+		}
+		public PointF getCenterPoint(){
+			return this.centerPoint;
 		}
 	}
-	
-	public static class Point {
-		protected int x;
-		protected int y;
 
-		public Point(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-
-		Point(Point p) {
-			this.x = p.getx();
-			this.y = p.gety();
-		}
-
-		public int getx() {
-			return x;
-		}
-
-		public int gety() {
-			return y;
-		}
-
-		public void setx(int x) {
-			this.x = x;
-		}
-
-		public void sety(int y) {
-			this.y = y;
-		}
-	}
 }
