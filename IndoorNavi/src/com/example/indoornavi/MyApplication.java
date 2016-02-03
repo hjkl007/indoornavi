@@ -1,23 +1,31 @@
 package com.example.indoornavi;
 
 import java.util.ArrayList;
-import java.util.List;
+import com.example.indoornavi.algorithm.Dijkstra;
 
 import android.app.Application;
-import android.content.Intent;
 import android.graphics.PointF;
 
 public class MyApplication extends Application {
 
 	public ArrayList<Element> elements = new ArrayList<Element>();
 	private Element searchElement = null;
-	//public PointF point;
+	public Dijkstra dijkstra = new Dijkstra();
+	private PointF currentPoint = new PointF(465, 488);
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
 		
 
+	}
+	
+	public void setCurrentPoint(PointF p){
+		this.currentPoint.set(p);
+	}
+	
+	public PointF getCurrentPoint(){
+		return this.currentPoint;
 	}
 	
 	public void setSearchElement(Element search){
@@ -38,6 +46,10 @@ public class MyApplication extends Application {
 			this.elementName = melementName;
 			this.nextPoint = mp;
 			this.centerPoint = cen;
+		}
+		
+		public String getId(){
+			return this.id;
 		}
 		
 		public void setNextPoint(PointF point){

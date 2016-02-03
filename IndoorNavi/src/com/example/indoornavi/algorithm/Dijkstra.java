@@ -1,43 +1,40 @@
 package com.example.indoornavi.algorithm;
 
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+
 import android.graphics.PointF;
 
-public class Dijkstra {
+public class Dijkstra {	
+	
 
-	final List<Node> naviNodes;	//所有的导航点
-	List<Node> open = new ArrayList<Node>();	//当某点的相邻节点被遍历后，则从该点的child中移除
-	final Node startNode;
-	final Node targetNode;
+	ArrayList<Node> naviNodes = new ArrayList<Node>();	//所有的导航点
+	/*open有两层含义：
+	 * 1、key表示该节点已被遍历过；
+	 * 2、value表示引入key节点的内圈节点*/
+	Map<Node, ArrayList<Node>> open = new HashMap<Node, ArrayList<Node>>();	
+	
+	Node startNode;
+	Node targetNode;
 	boolean naviNodesIncludeStart = false;
 	boolean naviNodesIncludeTarget = false;
 	
 	Map<ArrayList<Node>, Integer> allPath;
-	ArrayList<Node> currentPath = new ArrayList<Node>();
-	Node currentNode;
+	
+	public Dijkstra(){
+		
+	}
+
 	
 	public Dijkstra(ArrayList<Node> nodes, Node start, Node target){
-		this.naviNodes = nodes;	
-		this.startNode = start;
-		this.targetNode = target;
 		
-		open = nodes;
-		currentNode = start;
-		currentPath.add(start);
+		this.naviNodes = nodes;			
+
+		initNode(start, target);
 		
-		for(Node n : nodes){
-			if(n.position.equals(start)){
-				naviNodesIncludeStart = true;
-				
-			}
-			if(n.position.equals(target)){
-				naviNodesIncludeTarget = true;
-			}
-			if(naviNodesIncludeStart && naviNodesIncludeTarget) 
-				break;
-		}
+		
 		/*
 		if(naviNodesIncludeStart){
 			this.startNode = start;
@@ -70,45 +67,168 @@ public class Dijkstra {
 		*/
 	}
 	
-	
-	
-	public ArrayList<Node> computePath(Node current){
-
-		Node tempNode = getNextNode(current);
-		if(tempNode != null){
-			currentPath.add(tempNode);
-			if(tempNode.getName().equals(targetNode.getName())){
-				tempNode = current;
-				
+	public void initNode(Node start, Node target){
+		
+		for(Node n : naviNodes){
+			if(n.position.equals(start.position)){
+				naviNodesIncludeStart = true;
+				this.startNode = n;
 			}
-			return computePath(tempNode);
-		}else{
-			
-			return null;
+			if(n.position.equals(target.position)){
+				naviNodesIncludeTarget = true;
+				this.targetNode = n;
+			}
+			if(naviNodesIncludeStart && naviNodesIncludeTarget) 
+				break;
 		}
 		
-		
-		
-	}
-	
-	public Float computeDistance(ArrayList<Node> node){
-		Float distance = null;
-		
-		return distance;
-	}
-	
-	
-	public Node getNextNode(Node node) {	//此node应该是open里的node
-		Node res = null;
-		
-		for(int i=0; i < open.size(); i++){	//最保险的判断方法，在牺牲效率的前提下
-			if(node.name.equals(open.get(i).name)){
-				if(open.get(i).child != null){
-					res = open.get(i).child.get(0); //是否应该反向删除？
-					open.get(i).child.remove(0);
-					break;
+		if(!naviNodesIncludeStart){
+			this.startNode = start;
+			
+			for(Node nextNode1 : naviNodes){
+
+				ArrayList<Node> childs = nextNode1.getChild();
+				for (Node nextNode2 : childs) {
+					int x = (int)startNode.position.x;
+					int y = (int)startNode.position.y;
+					int x1 = (int)nextNode1.position.x;
+					int y1 = (int)nextNode1.position.y;
+					int x2 = (int)nextNode2.position.x;
+					int y2 = (int)nextNode2.position.y;
+					
+					if((x-x1)*(y-y2) == (x-x2)*(y-y1) && (x-x1)*(x-x2) < 0){
+						
+						nextNode1.getChild().remove(nextNode2);
+						nextNode1.getChild().add(startNode);
+						nextNode2.getChild().remove(nextNode1);
+						nextNode2.getChild().add(startNode);
+						startNode.getChild().add(nextNode1);
+						startNode.getChild().add(nextNode2);
+						naviNodes.add(startNode);
+						
+					}							
 				}
 			}
+		}
+		
+		if(!naviNodesIncludeTarget){
+			this.targetNode = target;
+			boolean helperFlag = false;
+			for(Node nextNode1 : naviNodes){
+
+				ArrayList<Node> childs = nextNode1.getChild();	//childs为何为空？
+				int x = (int)targetNode.position.x;
+				int y = (int)targetNode.position.y;
+				int x1 = (int)nextNode1.position.x;
+				int y1 = (int)nextNode1.position.y;
+				for (Node nextNode2 : childs) {
+					
+					int x2 = (int)nextNode2.position.x;		//x2和y2为何都等于0
+					int y2 = (int)nextNode2.position.y;
+					
+					if((x-x1)*(y-y2) == (x-x2)*(y-y1) && (x-x1)*(x-x2) <= 0){
+						
+						nextNode1.getChild().remove(nextNode2);
+						nextNode1.getChild().add(targetNode);
+						nextNode2.getChild().remove(nextNode1);
+						nextNode2.getChild().add(targetNode);
+						targetNode.getChild().add(nextNode1);
+						targetNode.getChild().add(nextNode2);
+						helperFlag = true;
+						break;
+						
+					}							
+				}
+				if(helperFlag) break;
+			}
+			if(helperFlag){
+				naviNodes.add(targetNode);
+			}
+		}
+		
+		open.put(startNode, null);
+		
+	}
+	
+	public ArrayList<Node> getNaviNodes(){
+		return this.naviNodes;
+	}
+	
+	public void setStartNode(Node n){
+		this.startNode = n;
+	}
+	
+	public Node getStartNode(){
+		return this.startNode;
+	}
+	
+	public void setTargetNode(Node n){
+		this.targetNode = n;
+	}
+	
+	public Node getTargetNode(){
+		return this.targetNode;
+	}
+	
+
+	
+	public ArrayList<Node> computeDistance(Node n){
+		//Float distance = null;
+		ArrayList<Node> theBestPath = new ArrayList<Node>();
+		
+		ArrayList<Node> temp = new ArrayList<Node>();
+		temp.add(n);
+		
+		ArrayList<Node> circleNodes = getNextCircle(temp);
+		while(true){
+			
+			if(circleNodes.isEmpty()){
+				
+				break;
+			}
+			circleNodes = getNextCircle(circleNodes);
+		}
+		//取其中一条试试看
+		theBestPath.add(targetNode);
+		Node tem = targetNode;
+		System.out.print(targetNode.getName()+" <- ");
+		while(true){
+			Node node = open.get(tem).get(0);
+			
+			theBestPath.add(node);
+			System.out.print(node.getName()+" <- ");
+			if(node.equals(startNode))
+				break;
+			tem = node;
+		}
+		
+		return theBestPath;
+		
+		
+		//return distance;
+	}
+	
+	
+	public ArrayList<Node> getNextCircle(ArrayList<Node> insideNodes) {	
+		ArrayList<Node> res = new ArrayList<Node>();
+		res.clear();
+		for(Node n : insideNodes){
+			ArrayList<Node> childs = n.getChild();
+			/* 判断某一相邻节点是否已在open里			
+			 * 如果不在open里，则返回的外圈节点res应包含该节点，
+			 * 同时将之添加到open里；
+			 * 如果是这圈刚添加进open里的，添加相应的内圈节点即可*/
+			for(Node child : childs){	
+				if(!open.containsKey(child)){						
+					ArrayList<Node> tem = new ArrayList<Node>();
+					tem.add(n);
+					open.put(child, tem);
+					res.add(child);
+				}else if(res.contains(child)){					
+					open.get(child).add(n);
+				}
+			}
+			
 		}
 		
 		return res;
@@ -116,11 +236,19 @@ public class Dijkstra {
 	
 	
 
-	public class Node {
+	public static class Node {
 		private String name;
-		private PointF position;
-		private List<Node> child = new ArrayList<Node>();
-
+		private PointF position = new PointF();
+		private ArrayList<Node> child = new ArrayList<Node>();
+		
+		public Node(){
+			
+		}
+		
+		public Node(String name){
+			this.name = name;
+			//this.position = null;
+		}
 		public Node(String name, PointF p) {
 			this.name = name;
 			this.position = p;
@@ -135,14 +263,14 @@ public class Dijkstra {
 		}
 
 		public void setPosition(PointF p) {
-			this.position = p;
+			this.position.set(p);
 		}
 
 		public PointF getPosition() {
 			return position;
 		}
 
-		public List<Node> getChild() {
+		public ArrayList<Node> getChild() {
 			return child;
 		}
 
@@ -150,4 +278,15 @@ public class Dijkstra {
 			this.child = child;
 		}
 	}
+	
+
 }
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,7 @@
 package com.example.indoornavi;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,10 +25,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.indoornavi.MyApplication.Element;
+import com.example.indoornavi.algorithm.Dijkstra.Node;
 import com.example.indoornavi.helper.FileHelper;
 import com.jiahuan.svgmapview.SVGMapView;
 import com.jiahuan.svgmapview.SVGMapViewListener;
 import com.jiahuan.svgmapview.overlay.SVGMapLocationOverlay;
+import com.jiahuan.svgmapview.overlay.SVGMapNavigationOverlay;
 import com.jiahuan.svgmapview.overlay.SVGMapTargetOverlay;
 
 public class Scan extends Activity {
@@ -61,7 +64,7 @@ public class Scan extends Activity {
 				locationOverlay.setIndicatorArrowBitmap(BitmapFactory
 						.decodeResource(getResources(),
 								R.drawable.indicator_arrow));
-				locationOverlay.setPosition(new PointF(400, 500));
+				locationOverlay.setPosition(application.getCurrentPoint());
 				locationOverlay.setIndicatorCircleRotateDegree(90);
 				locationOverlay.setMode(SVGMapLocationOverlay.MODE_COMPASS);
 				locationOverlay.setIndicatorArrowRotateDegree(-45);
@@ -129,7 +132,7 @@ public class Scan extends Activity {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				// TODO Auto-generated method stub
-				Element elementChosen = application.getSearchElement();
+				
 				
 				showAlterBuilder(Scan.this);
 			}
@@ -138,6 +141,7 @@ public class Scan extends Activity {
 	}
 
 	public void showAlterBuilder(Context context) {
+		
 		AlertDialog.Builder targetBuilder = new AlertDialog.Builder(context);
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View target_builder = inflater.inflate(R.layout.target_builder_view,
@@ -150,7 +154,23 @@ public class Scan extends Activity {
 		targetBuilder.setPositiveButton("到这里",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
+						PointF target = application.getSearchElement().getNextPoint();
+						PointF start = application.getCurrentPoint();
+						Node startNode = new Node("start", start);
+						Node targetNode = new Node ("target", target);
 						
+						application.dijkstra.initNode(startNode, targetNode);
+						ArrayList<Node> path = application.dijkstra.computeDistance(application.dijkstra.getStartNode());
+						ArrayList<PointF> pathLine = new ArrayList<PointF>();
+						pathLine.add(application.getSearchElement().centerPoint);
+						for(Node n : path){
+							pathLine.add(n.getPosition());
+						}
+						
+						SVGMapNavigationOverlay navigationOverlay = new SVGMapNavigationOverlay(mapView);
+						navigationOverlay.setPathLine(pathLine);
+						mapView.getOverLays().add(navigationOverlay);
+						mapView.refresh();
 					}
 				});
 		targetBuilder.setNeutralButton("详情",

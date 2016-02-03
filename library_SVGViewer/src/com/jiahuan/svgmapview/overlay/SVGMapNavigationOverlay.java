@@ -23,7 +23,7 @@ public class SVGMapNavigationOverlay extends SVGMapBaseOverlay
 	public SVGMapNavigationOverlay(SVGMapView svgMapView){
 		
 		this.showLevel = drawLevel;
-		path = new ArrayList<PointF>();
+		path = new ArrayList<PointF>();  
 		dashPaint = new Paint();
 
 	}
@@ -60,11 +60,13 @@ public class SVGMapNavigationOverlay extends SVGMapBaseOverlay
 	public void draw(Canvas canvas, Matrix matrix, float currentZoom,
 			float currentRotateDegrees) {
 		// TODO Auto-generated method stub
+		canvas.save();
+        canvas.setMatrix(matrix);
 		dashPaint.setAntiAlias(true);
 		dashPaint.setARGB(255, 0, 128, 255);
 		dashPaint.setStyle(Paint.Style.STROKE);
-		dashPaint.setPathEffect(new DashPathEffect(new float[]{ 10, 40, }, 0));
-		dashPaint.setStrokeWidth(12);
+		dashPaint.setPathEffect(new DashPathEffect(new float[]{ 15, 10, }, 0));
+		dashPaint.setStrokeWidth(8);
 		if(path != null){
 			Path pathLine = new Path();
 			pathLine.moveTo(path.get(0).x, path.get(0).y);
@@ -73,7 +75,7 @@ public class SVGMapNavigationOverlay extends SVGMapBaseOverlay
 			}
 			canvas.drawPath(pathLine, dashPaint);
 		}
-		
+		canvas.restore();
 		
 	}
 	

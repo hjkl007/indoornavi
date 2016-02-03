@@ -23,7 +23,8 @@
         android:theme="@style/AppTheme" >
         <receiver android:name="com.example.indoornavi.helper.BroadcastReceiverHelper" >
             <intent-filter>
-                <action android:name="android.intent.action.element.data" />
+                <action android:name="android.intent.action.rectdesc.data" />
+                <action android:name="android.intent.action.documentdesc.data" />
             </intent-filter>
         </receiver>
 

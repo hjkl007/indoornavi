@@ -881,17 +881,16 @@ public class SVGParser {
 
 		final HashMap<String, Gradient> gradientMap = new HashMap<String, Gradient>();
 		Gradient gradient = null;
+		
+		boolean documentDesc = false;
+		boolean rectDesc = false;
 
-		boolean xmlText = false;
-		boolean xmlDesc = false;
-		Float xText = null;
-		Float yText = null;
-		Float textSize = null;
 		String rectID = "";
 		Context context;
 		Float RectCenterX;
 		Float RectCenterY;
-		public static final String BROADCAST_ACTION = "android.intent.action.element.data";
+		public static final String RECTDESC_ACTION = "android.intent.action.rectdesc.data";
+		public static final String DOCUMENTDESC_ACTION = "android.intent.action.documentdesc.data";
 
 		public SVGHandler(Context context) {
 			strokePaint = new Paint();
@@ -1373,6 +1372,7 @@ public class SVGParser {
 				strokeSet |= (props.getString("stroke") != null);
 
 			} else if (!hidden && localName.equals("rect")) {
+				rectDesc = true;
 				Float x = getFloatAttr("x", atts);
 				if (x == null) {
 					x = 0f;
@@ -1518,14 +1518,12 @@ public class SVGParser {
 					doLimits(rect, strokePaint);
 				}
 				popTransform();
-			} else if (!hidden && localName.equals("text")) {
-				xmlText = true;
-				xText = getFloatAttr("x", atts);
-				yText = getFloatAttr("y", atts);
-				textSize = getFloatAttr("font-size", atts);
-
 			} else if (!hidden && localName.equals("desc")){
-				xmlDesc = true;
+				/*目前只有两处地方有description：
+				 * rect里和svg里
+				 * 判断如果不是在rect里，则在svg里*/
+				if(!rectDesc)
+					documentDesc = true;
 			}
 
 			else if (!hidden) {
@@ -1540,16 +1538,11 @@ public class SVGParser {
 		@Override
 		public void characters(char ch[], int start, int length) {
 			// no-op
-			if (xmlText) {
-				String textString = new String(ch, start, length);
-				textPaint.setColor(Color.BLUE);
-				textPaint.setTextSize(textSize);
-				canvas.drawText(textString, xText, yText, textPaint);
-			}
-			if (xmlDesc) {
+
+			if (rectDesc) {
 				if(!rectID.equals("")){
 					Intent intent = new Intent();
-					intent.setAction(BROADCAST_ACTION);
+					intent.setAction(RECTDESC_ACTION);
 					intent.putExtra("id", rectID);
 					intent.putExtra("nextPoint", new String(ch, start, length));
 					intent.putExtra("center", new float[]{RectCenterX, RectCenterY});
@@ -1558,6 +1551,12 @@ public class SVGParser {
 					Log.i(TAG, "center = ("+RectCenterX+", "+ RectCenterY+")");
 					//LocalBroadcastManager.getInstance(getInstance()).sendBroadcast(intent);
 				}
+			}
+			if(documentDesc){
+				Intent intent = new Intent();
+				intent.setAction(DOCUMENTDESC_ACTION);
+				intent.putExtra("naviInfo", new String(ch, start, length));
+				context.sendBroadcast(intent);
 			}
 		}
 
@@ -1631,11 +1630,10 @@ public class SVGParser {
 				if (!layerAttributeStack.isEmpty()) {
 					layerAttributeStack.removeLast();
 				}
-			} else if (localName.equals("text")) {
-				xmlText = false;
-			} else if (localName.equals("desc")) {
-				xmlDesc = false;
-			}
+			}  else if (localName.equals("desc")) {
+				documentDesc = false;
+				rectDesc = false;
+			} 
 			
 		}
 	}
