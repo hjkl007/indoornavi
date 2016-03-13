@@ -78,6 +78,7 @@ public class SVGMapView extends FrameLayout
     {
         this.mapMainView.refresh();
     }
+    
 
     /**
      * @return whether the map is already loaded.

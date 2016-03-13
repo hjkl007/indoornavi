@@ -48,6 +48,10 @@ public class Scan extends Activity {
 	public final static int SEARCHRESULTCODE = 10;
 	MyApplication application;
 	public final String CLICK_ACTION = "android.intent.action.click";
+	
+	UpdateCompass updateCompass;
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +68,15 @@ public class Scan extends Activity {
 				locationOverlay.setIndicatorArrowBitmap(BitmapFactory
 						.decodeResource(getResources(),
 								R.drawable.indicator_arrow));
-				locationOverlay.setPosition(application.getCurrentPoint());
-				locationOverlay.setIndicatorCircleRotateDegree(90);
 				locationOverlay.setMode(SVGMapLocationOverlay.MODE_COMPASS);
-				locationOverlay.setIndicatorArrowRotateDegree(-45);
+				locationOverlay.setPosition(application.getCurrentPoint());
+				//locationOverlay.setIndicatorCircleRotateDegree(90);
+				
+				//locationOverlay.setIndicatorArrowRotateDegree(-45);
 				mapView.getOverLays().add(locationOverlay);
 				mapView.refresh();
+				updateCompass = new UpdateCompass(Scan.this, mapView, locationOverlay);
+				
 			}
 
 			@Override
@@ -139,6 +146,12 @@ public class Scan extends Activity {
 		}, intentFilter);
 
 	}
+	
+	@Override
+    protected void onPause() {
+        super.onPause();
+        //updateCompass.compassPause();
+    }
 
 	public void showAlterBuilder(Context context) {
 		

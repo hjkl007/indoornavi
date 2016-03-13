@@ -154,7 +154,7 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
 
             if (currentMode == MODE_COMPASS)
             {
-                for (int i = 0; i < 360 / COMPASS_DELTA_ANGLE; i++)
+                /*for (int i = 0; i < 360 / COMPASS_DELTA_ANGLE; i++)
                 {
                     canvas.save();
                     canvas.rotate(COMPASS_DELTA_ANGLE * i, goal[0], goal[1]);
@@ -167,14 +167,14 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
                         canvas.drawCircle(goal[0], goal[1] - compassRadius, compassLocationCircleRadius, new Paint());
                     }
                     canvas.restore();
-                }
+                }*/
                 if (compassIndicatorArrowBitmap != null)
                 {
                     canvas.save();
                     canvas.rotate(this.compassIndicatorArrowRotateDegree, goal[0], goal[1]);
                     canvas.drawBitmap(compassIndicatorArrowBitmap, goal[0] - compassIndicatorArrowBitmap.getWidth() / 2, goal[1] - defaultLocationCircleRadius - compassIndicatorGap, new Paint());
                     canvas.restore();
-                    if (360 - (this.compassIndicatorArrowRotateDegree - this.compassIndicatorCircleRotateDegree) > 180)
+                    /*if (360 - (this.compassIndicatorArrowRotateDegree - this.compassIndicatorCircleRotateDegree) > 180)
                     {
                         canvas.drawArc(new RectF(goal[0] - compassRadius, goal[1] - compassRadius, goal[0] + compassRadius, goal[1] + compassRadius), -90 + this.compassIndicatorCircleRotateDegree, (this.compassIndicatorArrowRotateDegree - this.compassIndicatorCircleRotateDegree), false,
                                 indicatorArcPaint);
@@ -183,12 +183,12 @@ public class SVGMapLocationOverlay extends SVGMapBaseOverlay
                     {
                         canvas.drawArc(new RectF(goal[0] - compassRadius, goal[1] - compassRadius, goal[0] + compassRadius, goal[1] + compassRadius), -90 + this.compassIndicatorArrowRotateDegree, 360 - (this.compassIndicatorArrowRotateDegree - this.compassIndicatorCircleRotateDegree), false,
                                 indicatorArcPaint);
-                    }
+                    }*/
 
                 }
                 canvas.save();
                 canvas.rotate(compassIndicatorCircleRotateDegree, goal[0], goal[1]);
-                canvas.drawCircle(goal[0], goal[1] - compassRadius, compassIndicatorCircleRadius, indicatorCirclePaint);
+                //canvas.drawCircle(goal[0], goal[1] - compassRadius, compassIndicatorCircleRadius, indicatorCirclePaint);
                 canvas.restore();
             }
 
