@@ -114,8 +114,10 @@ public class MapOverlay extends SVGMapBaseOverlay
         canvas.setMatrix(matrix);
         if (floorMap != null)
         {
+        	
             canvas.drawPicture(floorMap);
         }
         canvas.restore();
+        //Log.d(TAG, "----------printed by MapOverlay-----------");
     }
 }

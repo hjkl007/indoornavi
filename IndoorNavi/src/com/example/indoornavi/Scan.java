@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
@@ -36,6 +37,7 @@ import com.jiahuan.svgmapview.overlay.SVGMapTargetOverlay;
 public class Scan extends Activity {
 
 	String url = "http://192.168.1.107/api/";
+	final String mPerfName = "com.example.indoornavi";
 	EditText et;
 	String filename = "";
 	String dir = "/IndoorNavi/";
@@ -101,14 +103,39 @@ public class Scan extends Activity {
 						R.anim.slide_out_left);
 			}
 		});
+		
+		String deviceId = getIntent().getStringExtra("ID");
+		SharedPreferences mPref = getSharedPreferences(mPerfName, 0);
+		String adCode = mPref.getString("AdCode", "");
+		filename = adCode + deviceId + ".svg";
+		Log.i("zhr", "locate = " + filename);
 
-		new AlertDialog.Builder(this).setTitle("请输入：")
+		File mkDir = new File(sdRoot, dir);
+		if (!mkDir.exists())
+			mkDir.mkdirs();
+
+		if (mkDir.listFiles().length > 0) {
+			for (File file : mkDir.listFiles()) {
+				if (filename.equals(file.getName())) {
+					isExist = true;
+					break;
+				}
+			}
+			Message message = new Message();
+			if (isExist)
+				message.what = file_exist;
+			else
+				message.what = file_no_exist;
+			mHandler.sendMessage(message);
+		}
+
+/*		new AlertDialog.Builder(this).setTitle("请输入：")
 				.setIcon(android.R.drawable.ic_dialog_info).setView(et)
 				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
-						filename = et.getText().toString() + ".svg";
+						filename = "110114003.svg";
 						Log.i("zhr", "locate = " + filename);
 
 						File mkDir = new File(sdRoot, dir);
@@ -132,7 +159,7 @@ public class Scan extends Activity {
 
 					}
 
-				}).setNegativeButton("取消", null).show();
+				}).setNegativeButton("取消", null).show();*/
 
 		IntentFilter intentFilter = new IntentFilter(CLICK_ACTION);
 		registerReceiver(new BroadcastReceiver() {
