@@ -18,6 +18,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -891,7 +892,8 @@ public class SVGParser {
 		Float RectCenterY;
 		public static final String RECTDESC_ACTION = "android.intent.action.rectdesc.data";
 		public static final String DOCUMENTDESC_ACTION = "android.intent.action.documentdesc.data";
-
+		public static final String SCALE_ACTION = "android.intent.action.scale.data";
+		public static final String mPerfName = "svgdata";
 		public SVGHandler(Context context) {
 			strokePaint = new Paint();
 			strokePaint.setAntiAlias(true);
@@ -1284,6 +1286,7 @@ public class SVGParser {
 								&& y2 != null) {
 							float width = FloatMath.ceil(x2 - x1);
 							float height = FloatMath.ceil(y2 - y1);
+							
 							canvas = picture.beginRecording((int) width,
 									(int) height);
 							canvasRestoreCount = canvas.save();
@@ -1292,8 +1295,19 @@ public class SVGParser {
 							limitsAdjustmentY = -y1;
 							canvas.translate(limitsAdjustmentX,
 									limitsAdjustmentY);
+							
+							SharedPreferences.Editor prefs = context.getSharedPreferences(mPerfName, 0).edit();
+							prefs.putFloat("svgWidth", width);
+							prefs.commit();
 						}
 					}
+				}
+				String scale = getStringAttr("scale", atts);
+				if(scale != null){
+					float scaleValue = Float.valueOf(scale);
+					SharedPreferences.Editor prefs = context.getSharedPreferences(mPerfName, 0).edit();
+					prefs.putFloat("svgScale", scaleValue);
+					prefs.commit();
 				}
 				// No viewbox
 				if (canvas == null) {

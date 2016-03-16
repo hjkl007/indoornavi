@@ -65,7 +65,9 @@ public class HelloView extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(HelloView.this, OpenCamera.class);
+				Intent intent = new Intent(HelloView.this, Scan.class);
+				String deviceId = "003";
+				intent.putExtra("ID", deviceId);
 				startActivity(intent);
 			}
 		});

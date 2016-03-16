@@ -1,5 +1,6 @@
 package com.example.indoornavi.helper;
 
+import com.example.indoornavi.HelloView;
 import com.example.indoornavi.MyApplication;
 import com.example.indoornavi.MyApplication.Element;
 import com.example.indoornavi.algorithm.Dijkstra.Node;
@@ -7,6 +8,7 @@ import com.example.indoornavi.algorithm.Dijkstra.Node;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PointF;
 import android.util.Log;
 
@@ -14,6 +16,8 @@ public class BroadcastReceiverHelper extends BroadcastReceiver {
 	
 	public static final String RECTDESC_ACTION = "android.intent.action.rectdesc.data";
 	public static final String DOCUMENTDESC_ACTION = "android.intent.action.documentdesc.data";
+	public static final String SCALE_ACTION = "android.intent.action.scale.data";
+	final String mPerfName = "com.example.indoornavi";
 	MyApplication application;
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -103,15 +107,8 @@ public class BroadcastReceiverHelper extends BroadcastReceiver {
 				
 				
 			}
-			
-			
-			
-			
-		}
-		
-		
-		
-		
+				
+		}		
 		
 	}
 

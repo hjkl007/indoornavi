@@ -18,12 +18,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.indoornavi.MyApplication.Element;
 import com.example.indoornavi.algorithm.Dijkstra.Node;
@@ -39,12 +42,14 @@ public class Scan extends Activity {
 	String url = "http://192.168.1.107/api/";
 	final String mPerfName = "com.example.indoornavi";
 	EditText et;
+	TextView tvScale;
 	String filename = "";
 	String dir = "/IndoorNavi/";
 	File sdRoot = Environment.getExternalStorageDirectory();
 	boolean isExist = false;
 	final int file_exist = 1;
 	final int file_no_exist = 2;
+	final int change_scale = 3;
 	private SVGMapView mapView;
 	private ImageView search;
 	public final static int SEARCHRESULTCODE = 10;
@@ -62,6 +67,9 @@ public class Scan extends Activity {
 		application = (MyApplication) this.getApplicationContext();
 		et = new EditText(this);
 		mapView = (SVGMapView) findViewById(R.id.location_mapview);
+/*		mapView.setBrandBitmap(BitmapFactory.decodeResource(getResources(),
+				R.drawable.logo_2x));*/
+		
 		mapView.registerMapViewListener(new SVGMapViewListener() {
 			@Override
 			public void onMapLoadComplete() {
@@ -72,13 +80,10 @@ public class Scan extends Activity {
 								R.drawable.indicator_arrow));
 				locationOverlay.setMode(SVGMapLocationOverlay.MODE_COMPASS);
 				locationOverlay.setPosition(application.getCurrentPoint());
-				//locationOverlay.setIndicatorCircleRotateDegree(90);
-				
-				//locationOverlay.setIndicatorArrowRotateDegree(-45);
 				mapView.getOverLays().add(locationOverlay);
 				mapView.refresh();
 				updateCompass = new UpdateCompass(Scan.this, mapView, locationOverlay);
-				
+				new Thread(new MyThread()).start();	//更新比例尺
 			}
 
 			@Override
@@ -171,14 +176,21 @@ public class Scan extends Activity {
 				showAlterBuilder(Scan.this);
 			}
 		}, intentFilter);
+		
+		//setbilichi();
 
 	}
 	
-	@Override
-    protected void onPause() {
-        super.onPause();
-        //updateCompass.compassPause();
-    }
+
+	/*public void setbilichi(){
+		
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		
+		
+		tvScale = (TextView) findViewById(R.id.tvScales);
+		//tvScale.setX(200);	//(float)(screenWidth*0.1)
+		//tvScale.setY(1000);	//(float)(screenHeight*0.9)
+	}*/
 
 	public void showAlterBuilder(Context context) {
 		
@@ -246,8 +258,12 @@ public class Scan extends Activity {
 				FileHelper.getURL(url_api);
 				String f2 = sdRoot.getPath() + dir + filename;
 				mapView.loadMap(FileHelper.getContent(f2), Scan.this);
-
 				break;
+				
+			case change_scale:
+				mapView.setScaleData();
+				break;
+				
 			default:
 				break;
 			}
@@ -279,4 +295,23 @@ public class Scan extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	public class MyThread implements Runnable {
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while (true) {
+				try {
+					Thread.sleep(1000);// 线程暂停10秒，单位毫秒
+					Message message = new Message();
+					message.what = change_scale;
+					mHandler.sendMessage(message);// 发送消息
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }
+
+
