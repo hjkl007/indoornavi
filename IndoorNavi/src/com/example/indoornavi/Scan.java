@@ -54,6 +54,7 @@ public class Scan extends Activity {
 	private ImageView search;
 	public final static int SEARCHRESULTCODE = 10;
 	MyApplication application;
+	BroadcastReceiver br;
 	public final String CLICK_ACTION = "android.intent.action.click";
 	
 	UpdateCompass updateCompass;
@@ -67,8 +68,8 @@ public class Scan extends Activity {
 		application = (MyApplication) this.getApplicationContext();
 		et = new EditText(this);
 		mapView = (SVGMapView) findViewById(R.id.location_mapview);
-/*		mapView.setBrandBitmap(BitmapFactory.decodeResource(getResources(),
-				R.drawable.logo_2x));*/
+		mapView.setBrandBitmap(BitmapFactory.decodeResource(getResources(),
+				R.drawable.logo_2x));
 		
 		mapView.registerMapViewListener(new SVGMapViewListener() {
 			@Override
@@ -167,30 +168,25 @@ public class Scan extends Activity {
 				}).setNegativeButton("取消", null).show();*/
 
 		IntentFilter intentFilter = new IntentFilter(CLICK_ACTION);
-		registerReceiver(new BroadcastReceiver() {
+		br = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				// TODO Auto-generated method stub
-				
-				
+				// TODO Auto-generated method stub			
 				showAlterBuilder(Scan.this);
 			}
-		}, intentFilter);
+		};
+		registerReceiver(br, intentFilter);
 		
-		//setbilichi();
+
 
 	}
 	
-
-	/*public void setbilichi(){
-		
-		DisplayMetrics dm = getResources().getDisplayMetrics();
-		
-		
-		tvScale = (TextView) findViewById(R.id.tvScales);
-		//tvScale.setX(200);	//(float)(screenWidth*0.1)
-		//tvScale.setY(1000);	//(float)(screenHeight*0.9)
-	}*/
+	@Override
+	public void onPause(){
+		super.onPause();
+		unregisterReceiver(br);
+	}
+	
 
 	public void showAlterBuilder(Context context) {
 		

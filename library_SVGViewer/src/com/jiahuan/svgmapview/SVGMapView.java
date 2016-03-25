@@ -4,12 +4,14 @@ package com.jiahuan.svgmapview;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
 
@@ -27,8 +29,13 @@ public class SVGMapView extends FrameLayout
 
     private ImageView brandImageView;
     
+    private ImageView scalePlate;
+    
     private TextView scaleData;
     
+    private LinearLayout linear1;
+    
+    private DisplayMetrics dm;
     private float lastZoomValue = 0;
     private float svgWidth = 0;
     private float scaleValue = 0;
@@ -47,30 +54,49 @@ public class SVGMapView extends FrameLayout
     public SVGMapView(Context context, AttributeSet attrs, int defStyle)
     {
         super(context, attrs, defStyle);
+       
         mapMainView = new MapMainView(context, attrs, defStyle);
         addView(mapMainView);
-        brandImageView = new ImageView(context, attrs, defStyle);
-        brandImageView.setScaleType(ScaleType.FIT_START);
-        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, context.getResources().getDisplayMetrics()));
-        params.gravity = Gravity.BOTTOM | Gravity.LEFT;
-        params.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, context.getResources().getDisplayMetrics());
-        params.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources().getDisplayMetrics());
-        addView(brandImageView, params);
-        scaleData = new TextView(context, attrs, defStyle);
-        scaleData.setTextSize(15);
-        lastZoomValue = getCurrentZoomValue();
         
+        dm = getResources().getDisplayMetrics();
+        lastZoomValue = getCurrentZoomValue();       
         SharedPreferences mPref = context.getSharedPreferences(mPerfName, 0);
         svgWidth = mPref.getFloat("svgWidth", 0);
         scaleValue = mPref.getFloat("svgScale", 0);
         
-
-        scaleData.setText("5");
-        LayoutParams params2 = new LayoutParams(LayoutParams.WRAP_CONTENT, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, context.getResources().getDisplayMetrics()));
+        brandImageView = new ImageView(context, attrs, defStyle);
+        brandImageView.setScaleType(ScaleType.FIT_START);
+        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, setDip(15));
+        params.gravity = Gravity.BOTTOM | Gravity.LEFT;
+        params.leftMargin = setDip(4);
+        params.bottomMargin = setDip(10);
+        addView(brandImageView, params);
+        
+        linear1 = new LinearLayout(context, attrs, defStyle);
+        LayoutParams paramsLinear = new LayoutParams(LayoutParams.MATCH_PARENT, setDip(15));
+        paramsLinear.gravity = Gravity.BOTTOM | Gravity.LEFT;
+        paramsLinear.leftMargin = setDip(8);
+        paramsLinear.bottomMargin = setDip(40);
+        
+        scaleData = new TextView(context, attrs, defStyle);
+        scaleData.setTextSize(15);
+        LayoutParams params2 = new LayoutParams(LayoutParams.WRAP_CONTENT, setDip(15));
         params2.gravity = Gravity.BOTTOM | Gravity.LEFT;
-        params2.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, context.getResources().getDisplayMetrics());
-        params2.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources().getDisplayMetrics());
-        addView(scaleData, params2);
+        linear1.addView(scaleData, params2);
+        
+        scalePlate = new ImageView(context, attrs, defStyle);
+        scalePlate.setImageResource(R.drawable.scale);
+        //scalePlate.setScaleX((float) (dm.xdpi/2.54));
+        scalePlate.setScaleType(ScaleType.FIT_START);
+        LayoutParams params3 = new LayoutParams(LayoutParams.WRAP_CONTENT, setDip(10));
+        params3.gravity = Gravity.BOTTOM | Gravity.LEFT;
+        linear1.addView(scalePlate, params3);
+     
+        addView(linear1, paramsLinear);
+    }
+    
+    public int setDip(float f){
+    	return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, f, dm);
     }
 
     /**
@@ -102,12 +128,12 @@ public class SVGMapView extends FrameLayout
     public void setScaleData(){
     	float zoom = getCurrentZoomValue();
         if(lastZoomValue != zoom){
-        	DisplayMetrics dm = getResources().getDisplayMetrics();
         	int finalScale = (int) (scaleValue / ((svgWidth*2.54*zoom)/dm.xdpi));
-        	this.scaleData.setText(String.valueOf(finalScale));
+        	this.scaleData.setText(String.valueOf(finalScale)+'m');
         	lastZoomValue = zoom;
         }
     }
+    
 
     public void refresh()
     {

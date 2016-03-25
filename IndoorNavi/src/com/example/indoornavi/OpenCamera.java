@@ -140,12 +140,12 @@ public class OpenCamera extends Activity implements SurfaceHolder.Callback,
 		}*/
 	}
 	
-	private native boolean sendImageData(byte[] data, String format, int width, int height);
+	/*private native boolean sendImageData(byte[] data, String format, int width, int height);
 	private native String getDeviceId();
 	
 	static {
 		System.loadLibrary("algo");
-	}
+	}*/
 }
 
 

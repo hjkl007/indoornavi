@@ -17,6 +17,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -36,7 +39,10 @@ import android.util.Log;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.jiahuan.svgmapview.core.helper.db.IProivderMetaData;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
  * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
@@ -890,6 +896,15 @@ public class SVGParser {
 		Context context;
 		Float RectCenterX;
 		Float RectCenterY;
+		
+		final private int louti = 1;
+		final private int dianti = 2;
+		final private int futi = 3;
+		final private int churukou = 4;
+		final private int weishengjian = 5;
+		final private int atm = 6;
+		ContentResolver contentResolver;
+
 		public static final String RECTDESC_ACTION = "android.intent.action.rectdesc.data";
 		public static final String DOCUMENTDESC_ACTION = "android.intent.action.documentdesc.data";
 		public static final String SCALE_ACTION = "android.intent.action.scale.data";
@@ -908,6 +923,7 @@ public class SVGParser {
 			matrixStack.addFirst(new Matrix());
 			layerAttributeStack.addFirst(new LayerAttributes(1f));
 			this.context = context;
+			contentResolver = this.context.getContentResolver();
 			//application = new Application();  
 			//this.context = application.getApplicationContext();  
 		}
@@ -1567,10 +1583,47 @@ public class SVGParser {
 				}
 			}
 			if(documentDesc){
-				Intent intent = new Intent();
-				intent.setAction(DOCUMENTDESC_ACTION);
-				intent.putExtra("naviInfo", new String(ch, start, length));
-				context.sendBroadcast(intent);
+				String desc = new String(ch, start, length);
+				if(desc.startsWith("p")){
+					Intent intent = new Intent();
+					intent.setAction(DOCUMENTDESC_ACTION);
+					intent.putExtra("naviInfo", desc);
+					context.sendBroadcast(intent);
+				}else{
+					String[] pois = desc.split(";");
+					String poiName = null;
+					float center_x;
+					float center_y;
+					float next_x;
+					float next_y;
+					for(String poi : pois){
+						String[] tmp = poi.split(":");
+						switch(Integer.parseInt(tmp[0])){
+						case louti : poiName = "楼梯";break;
+						case dianti : poiName = "电梯";break;
+						case futi : poiName = "扶梯";break;
+						case churukou : poiName = "出入口";break;
+						case weishengjian : poiName = "卫生间";break;
+						case atm : poiName = "ATM";break;
+						}
+						center_x = Float.parseFloat(tmp[1].split(",")[0]);
+						center_y = Float.parseFloat(tmp[1].split(",")[1]);
+						next_x = Float.parseFloat(tmp[2].split(",")[0]);
+						next_y = Float.parseFloat(tmp[2].split(",")[1]);
+						
+						ContentValues values = new ContentValues();
+						values.put(IProivderMetaData.PoiTableMetaData.POI_NAME, poiName);
+						values.put(IProivderMetaData.PoiTableMetaData.POI_LOCATON_X, center_x);
+						values.put(IProivderMetaData.PoiTableMetaData.POI_LOCATON_Y, center_y);
+						values.put(IProivderMetaData.PoiTableMetaData.POI_NEXT_X, next_x);
+						values.put(IProivderMetaData.PoiTableMetaData.POI_NEXT_Y, next_y);
+						Uri insertUri = contentResolver.insert(
+					                IProivderMetaData.PoiTableMetaData.CONTENT_URI, values);
+						ContentUris.parseId(insertUri);
+						
+					}
+				}
+				
 			}
 		}
 

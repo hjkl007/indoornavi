@@ -4,13 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
+//耦合度太高，后期需要修改
 import com.example.indoornavi.R;
+import com.example.indoornavi.UploadImage;
+
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnClosedListener;
 
@@ -20,7 +19,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnClosedListener;
 public class DrawerView implements OnClickListener{
 	private final Activity activity;
 	SlidingMenu localSlidingMenu;
-	private TextView night_mode_text;
+	private RelativeLayout upload_text;
 	private RelativeLayout setting_btn;
 	public DrawerView(Activity activity) {
 		this.activity = activity;
@@ -59,10 +58,19 @@ public class DrawerView implements OnClickListener{
 	}
 
 	private void initView() {
-		
-		
-		
-		
+		upload_text = (RelativeLayout) localSlidingMenu.findViewById(R.id.upload_btn);
+		upload_text.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+				Intent picture = new Intent(
+						Intent.ACTION_PICK,
+						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				activity.startActivityForResult(picture, 103);
+			}
+		});
+	
 	}
 
 	@Override
